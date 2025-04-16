@@ -8,5 +8,6 @@ namespace ShipRegister
 {
     internal class Register
     {
+        private Dictionary<int, Ship> vessels;
     }
 }
