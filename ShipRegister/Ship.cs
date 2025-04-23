@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Numerics;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -31,7 +32,20 @@ namespace ShipRegister
             return retValue;
         }
 
-        public bool validateIMO()
+        public string getName()
+        {
+            return name;
+        }
+        public float getLength()
+        {
+            return length;
+        }
+        public float getWidth()
+        {
+            return width;
+        }
+
+        public bool IsImoValid()
         {
             for (int i = 0; i < IMOLength; i++)
             {
@@ -51,10 +65,23 @@ namespace ShipRegister
 
         public Ship(string name, char[] IMO, float length, float width)
         {
-            this.name = name;
             this.IMO = IMO;
+            this.name = name;
             this.length = length;
             this.width = width;
+
+            if (!IsImoValid())
+            {
+                throw new ArgumentException("IMO is not valid");
+            }
+            if( length <= 0)
+            {
+                throw new ArgumentException("length has to be greater than 0");
+            }
+            if (width <= 0)
+            {
+                throw new ArgumentException("width has to be greater than 0");
+            }
         }
     }
 
@@ -63,6 +90,14 @@ namespace ShipRegister
         private string name;
         private string surname;
 
+        public string GetName()
+        {
+            return name;
+        }
+        public string GetSurname()
+        {
+            return surname;
+        }
         public Person(string name, string surname)
         {
             this.name = name;
@@ -85,13 +120,13 @@ namespace ShipRegister
             this.ID = id;
         }
     }
-    enum FuelType
+    public enum FuelType
     {
         Diesel,
         HeavyFuel
     };
 
-    struct Tank
+    public class Tank
     {
         FuelType fuelType;
 
@@ -105,6 +140,7 @@ namespace ShipRegister
         {
             tankCapacity = capacity;
         }
+
 
         public void AddFuelToTank(uint fuelQuantity, FuelType type)
         {
@@ -126,31 +162,34 @@ namespace ShipRegister
 
             fuelLevel += fuelQuantity;
             fuelType = type;
-            Console.WriteLine($"Fuel succesfully added. Current usage of tank is: {fuelLevel}");
+            Console.WriteLine($"Fuel succesfully added. Current fuel level in tank is: {fuelLevel}");
         }
 
         public void RemoveFuelFromTank(uint fuelQuantity)
         {
-            if (fuelQuantity <= 0) 
+            if (fuelQuantity <= 0)
             {
                 Console.WriteLine($"fuelQuantity has to be greater than 0");
                 return;
             }
-            if(fuelQuantity > fuelLevel)
+            if (fuelQuantity > fuelLevel)
             {
-
-                Console.WriteLine($"fuelQuantity is greater than fuel level in tank.");
+                Console.WriteLine($"fuelQuantity is greater than current fuel level in tank. Tank has been emptied");
+                fuelLevel = 0;
                 return;
             }
             fuelLevel -= fuelQuantity;
-
+            Console.WriteLine($"Fuel succesfully removed from tank. Current fuel level in tank is: {fuelLevel}");
         }
     }
-
     public class TankShip : Ship
     {
         private List<Tank> tanksOnVessel;
 
+        public Tank GetTankAtIndex(int index)
+        {
+            return tanksOnVessel[index];
+        }
         public TankShip(string name, char[] IMO, float length, float width) : base(name, IMO, length, width)
         {
             tanksOnVessel = new List<Tank>(4);
@@ -202,20 +241,21 @@ namespace ShipRegister
         {
             var newPassenger = new Passenger(passengersCounter, name, surname);
             passengers.Add(newPassenger.getID(), newPassenger);
+            Console.WriteLine($"Passenger: {newPassenger.GetName()} {newPassenger.GetSurname()} with id: {newPassenger.getID()} has been added");
             passengersCounter++;
         }
 
         void deletePassenger(uint id)
         {
-            passengers.Remove(id);
-        }
-        void editPassenger(uint id) 
-        {
-            var editedPassenger = passengers.GetValueOrDefault(id);
+            if (passengers.Remove(id))
+            {
+                Console.WriteLine($"Passenger: {passengers.GetValueOrDefault(id).GetName()} {passengers.GetValueOrDefault(id).GetSurname()} with id: {id} has been removed");
+            }
+            {
+                Console.WriteLine($"Couldnt find passenger with id: {id}");
+            }
         }
 
-        public PassengerShip(string name, char[] IMO, float length, float width) : base(name, IMO, length, width)
-        {
-        }
+        public PassengerShip(string name, char[] IMO, float length, float width) : base(name, IMO, length, width) { }
     }
 }

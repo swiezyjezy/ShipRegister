@@ -2,8 +2,14 @@
 using System;
 using ShipRegister;
 
-Console.WriteLine("Hello, World!");
+Register register = new();
 
-Ship ship = new Ship("skibidi", "4332322".ToCharArray(0,7), 125.5f, 80.5f);
-
-ship.validateIMO();
+try
+{
+    PassengerShip ship = new PassengerShip("skibidi", "90745729".ToCharArray(0, 7), 125.5f, 80.5f);
+    register.addVessel(ship);
+}
+catch (Exception e)
+{
+    Console.WriteLine($"exception thrown: {e.GetType().Name} - {e.Message}");
+}

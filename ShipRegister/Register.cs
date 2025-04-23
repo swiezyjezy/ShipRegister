@@ -13,6 +13,7 @@ namespace ShipRegister
         public void addVessel(Ship ship)
         {
             vessels.Add(ship.getIMOIntValue(), ship);
+            Console.WriteLine($"vessel {ship.getName()} was added to register");
         }
     }
 }
