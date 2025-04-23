@@ -8,6 +8,11 @@ namespace ShipRegister
 {
     internal class Register
     {
-        private Dictionary<int, Ship> vessels;
+        private Dictionary<int, Ship> vessels = new();
+
+        public void addVessel(Ship ship)
+        {
+            vessels.Add(ship.getIMOIntValue(), ship);
+        }
     }
 }
