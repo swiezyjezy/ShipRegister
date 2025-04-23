@@ -32,15 +32,15 @@ namespace ShipRegister
             return retValue;
         }
 
-        public string getName()
+        public string GetName()
         {
             return name;
         }
-        public float getLength()
+        public float GetLength()
         {
             return length;
         }
-        public float getWidth()
+        public float GetWidth()
         {
             return width;
         }
@@ -50,7 +50,10 @@ namespace ShipRegister
             for (int i = 0; i < IMOLength; i++)
             {
                 if (IMO[i] > '9' || IMO[i] < '0')
+                {
+                    Console.WriteLine("Not allowed character in IMO");
                     return false;
+                }
             }
 
             // check IMO's last digit 
@@ -60,12 +63,29 @@ namespace ShipRegister
                 int digit = IMO[i] - '0';
                 checkDigit += digit * (IMOLength - i);
             }
-            return checkDigit % 10 == IMO[IMOLength - 1] - '0';
+            if(checkDigit % 10 != IMO[IMOLength - 1] - '0')
+            {
+                Console.WriteLine($"IMO check digit is not correct. Expected value: {checkDigit % 10}");
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
-        public Ship(string name, char[] IMO, float length, float width)
+        public Ship(string name, string IMO, float length, float width)
         {
-            this.IMO = IMO;
+            if(IMO.Length != IMOLength)
+            {
+                Console.WriteLine($"IMO has to contain {IMOLength} digits");
+                throw new ArgumentException("IMO is not valid");
+            }
+            else
+            {
+                this.IMO = IMO.ToCharArray();
+            }
+            
             this.name = name;
             this.length = length;
             this.width = width;
@@ -139,6 +159,7 @@ namespace ShipRegister
         public Tank(uint capacity)
         {
             tankCapacity = capacity;
+            fuelLevel = 0;
         }
 
 
@@ -186,11 +207,16 @@ namespace ShipRegister
     {
         private List<Tank> tanksOnVessel;
 
-        public Tank GetTankAtIndex(int index)
+        public Tank? GetTankAtIndex(int index)
         {
+            if(index >= tanksOnVessel.Count)
+            {
+                Console.WriteLine($"Index out of boundary. Max index on this vessel is {tanksOnVessel.Count - 1}");
+                return null;
+            }
             return tanksOnVessel[index];
         }
-        public TankShip(string name, char[] IMO, float length, float width) : base(name, IMO, length, width)
+        public TankShip(string name, string IMO, float length, float width) : base(name, IMO, length, width)
         {
             tanksOnVessel = new List<Tank>(4);
             for(int i = 0; i < 8; i++)
@@ -199,7 +225,7 @@ namespace ShipRegister
             }
         }
 
-        public TankShip(string name, char[] IMO, float length, float width, int tanksQuantity) : base(name, IMO, length, width)
+        public TankShip(string name, string IMO, float length, float width, int tanksQuantity) : base(name, IMO, length, width)
         {
             if (tanksQuantity <= 0)
                 throw new ArgumentException("tanksQuantity has to be number greater than 0");
@@ -210,7 +236,7 @@ namespace ShipRegister
                 tanksOnVessel.Add(new Tank(5000000));
             }
         }
-        public TankShip(string name, char[] IMO, float length, float width, int tanksQuantity, uint [] tanksCapacity) : base(name, IMO, length, width)
+        public TankShip(string name, string IMO, float length, float width, int tanksQuantity, uint [] tanksCapacity) : base(name, IMO, length, width)
         {
             if (tanksQuantity <= 0)
                 throw new ArgumentException("tanksQuantity has to be number greater than 0");
@@ -237,7 +263,7 @@ namespace ShipRegister
         Dictionary<uint, Passenger> passengers = new();
         uint passengersCounter = 0;
 
-        void addPassenger(string name, string surname)
+        public void AddPassenger(string name, string surname)
         {
             var newPassenger = new Passenger(passengersCounter, name, surname);
             passengers.Add(newPassenger.getID(), newPassenger);
@@ -245,17 +271,19 @@ namespace ShipRegister
             passengersCounter++;
         }
 
-        void deletePassenger(uint id)
+        public void DeletePassenger(uint id)
         {
+            var removedPassenger = passengers.GetValueOrDefault(id);
             if (passengers.Remove(id))
             {
-                Console.WriteLine($"Passenger: {passengers.GetValueOrDefault(id).GetName()} {passengers.GetValueOrDefault(id).GetSurname()} with id: {id} has been removed");
+                Console.WriteLine($"Passenger: {removedPassenger.GetName()} {removedPassenger.GetSurname()} with id: {removedPassenger.getID()} has been removed");
             }
+            else
             {
                 Console.WriteLine($"Couldnt find passenger with id: {id}");
             }
         }
 
-        public PassengerShip(string name, char[] IMO, float length, float width) : base(name, IMO, length, width) { }
+        public PassengerShip(string name, string IMO, float length, float width) : base(name, IMO, length, width) { }
     }
 }
