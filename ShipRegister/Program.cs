@@ -17,7 +17,7 @@ try
         tankShip.GetTankAtIndex(1).AddFuelToTank(5000, FuelType.Diesel);
         tankShip.GetTankAtIndex(1).AddFuelToTank(2000, FuelType.Diesel);
         tankShip.GetTankAtIndex(1).RemoveFuelFromTank(3000);
-        tankShip.GetTankAtIndex(2).RemoveFuelFromTank(3000);
+        tankShip.GetTankAtIndex(8).RemoveFuelFromTank(3000);
     }
 
     var passengerShip = register.GetVessel(2948737);

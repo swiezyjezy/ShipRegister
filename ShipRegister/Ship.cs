@@ -16,10 +16,11 @@ namespace ShipRegister
     {
         public static int IMOLength = 7;
 
-        private string name;
+        public string name { get; }
+
         private char[] IMO = new char[IMOLength];
-        private float length;
-        private float width;
+        public float length { get; }
+        public float width { get; }
 
         public int getIMOIntValue()
         {
@@ -30,19 +31,6 @@ namespace ShipRegister
             }
 
             return retValue;
-        }
-
-        public string GetName()
-        {
-            return name;
-        }
-        public float GetLength()
-        {
-            return length;
-        }
-        public float GetWidth()
-        {
-            return width;
         }
 
         public bool IsImoValid()
@@ -107,17 +95,9 @@ namespace ShipRegister
 
     public class Person
     {
-        private string name;
-        private string surname;
+        public string name { get; }
+        public string surname { get; }
 
-        public string GetName()
-        {
-            return name;
-        }
-        public string GetSurname()
-        {
-            return surname;
-        }
         public Person(string name, string surname)
         {
             this.name = name;
@@ -128,12 +108,8 @@ namespace ShipRegister
 
     public class Passenger : Person
     {
-        private uint ID;
+        public uint ID { get; }
 
-        public uint getID()
-        {
-            return ID;
-        }
 
         public Passenger(uint id, string name, string surname) : base(name, surname)
         {
@@ -207,13 +183,10 @@ namespace ShipRegister
     {
         private List<Tank> tanksOnVessel;
 
-        public Tank? GetTankAtIndex(int index)
+        public Tank GetTankAtIndex(int index)
         {
-            if(index >= tanksOnVessel.Count)
-            {
-                Console.WriteLine($"Index out of boundary. Max index on this vessel is {tanksOnVessel.Count - 1}");
-                return null;
-            }
+            if (index < 0 || index >= tanksOnVessel.Count)
+                throw new IndexOutOfRangeException($"Invalid tank index: {index}");
             return tanksOnVessel[index];
         }
         public TankShip(string name, string IMO, float length, float width) : base(name, IMO, length, width)
@@ -266,8 +239,8 @@ namespace ShipRegister
         public void AddPassenger(string name, string surname)
         {
             var newPassenger = new Passenger(passengersCounter, name, surname);
-            passengers.Add(newPassenger.getID(), newPassenger);
-            Console.WriteLine($"Passenger: {newPassenger.GetName()} {newPassenger.GetSurname()} with id: {newPassenger.getID()} has been added");
+            passengers.Add(newPassenger.ID, newPassenger);
+            Console.WriteLine($"Passenger: {newPassenger.name} {newPassenger.surname} with id: {newPassenger.ID} has been added");
             passengersCounter++;
         }
 
@@ -276,7 +249,7 @@ namespace ShipRegister
             var removedPassenger = passengers.GetValueOrDefault(id);
             if (passengers.Remove(id))
             {
-                Console.WriteLine($"Passenger: {removedPassenger.GetName()} {removedPassenger.GetSurname()} with id: {removedPassenger.getID()} has been removed");
+                Console.WriteLine($"Passenger: {removedPassenger.name} {removedPassenger.surname} with id: {removedPassenger.ID} has been removed");
             }
             else
             {

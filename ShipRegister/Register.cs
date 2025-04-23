@@ -12,6 +12,13 @@ namespace ShipRegister
 
         public void AddVessel(Ship ship)
         {
+            int imo = ship.getIMOIntValue();
+            if (vessels.ContainsKey(imo))
+            {
+                Console.WriteLine($"Vessel with IMO {imo} is already in the register.");
+                return;
+            }
+
             vessels.Add(ship.getIMOIntValue(), ship);
             Console.WriteLine($"vessel {ship.GetName()} was added to register");
         }
