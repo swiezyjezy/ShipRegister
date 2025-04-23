@@ -15,9 +15,9 @@ try
     if (tanker is TankShip tankShip)
     {
         tankShip.GetTankAtIndex(1).AddFuelToTank(5000, FuelType.Diesel);
-        tankShip.GetTankAtIndex(1).AddFuelToTank(2000, FuelType.Diesel);
-        tankShip.GetTankAtIndex(1).RemoveFuelFromTank(3000);
-        tankShip.GetTankAtIndex(8).RemoveFuelFromTank(3000);
+        tankShip.GetTankAtIndex(2).AddFuelToTank(5000, FuelType.Diesel);
+        tankShip.GetTankAtIndex(2).RemoveFuelFromTank(3000);
+        tankShip.GetTankAtIndex(2).RemoveFuelFromTank(3000);
     }
 
     var passengerShip = register.GetVessel(2948737);
@@ -29,8 +29,11 @@ try
         tempPassengerShip.AddPassenger("aleksandra", "kowalska");
         tempPassengerShip.AddPassenger("franciszek", "kowalski");
 
-        tempPassengerShip.DeletePassenger(5);
+        tempPassengerShip.DeletePassenger(4);
     }
+
+    register.RemoveVessel(0);
+    register.AddVessel(new PassengerShip("passenger3", "9074638", 125.5f, 80.5f));
 
 }
 catch (Exception e)

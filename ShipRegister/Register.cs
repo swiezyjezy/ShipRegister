@@ -32,5 +32,19 @@ namespace ShipRegister
             else return null;
         }
 
+        public void RemoveVessel(int key)
+        {
+            if (vessels.ContainsKey(key))
+            {
+                vessels.Remove(key);
+                Console.WriteLine($"vessel with IMO: {key} successfully removed");
+            }
+            else
+            {
+                Console.WriteLine($"Couldnt find vessel with IMO: {key}");
+                return;
+            }
+        }
+
     }
 }
