@@ -20,7 +20,7 @@ namespace ShipRegister
             }
 
             vessels.Add(ship.getIMOIntValue(), ship);
-            Console.WriteLine($"vessel {ship.GetName()} was added to register");
+            Console.WriteLine($"vessel {ship.name} was added to register");
         }
 
         public Ship? GetVessel(int key)
