@@ -85,32 +85,111 @@ namespace ShipRegister
             this.ID = id;
         }
     }
-
+    enum FuelType
+    {
+        Diesel,
+        HeavyFuel
+    };
 
     struct Tank
     {
-
-        enum FuelType
-        {
-            Diesel,
-            HeavyFuel
-        };
-
         FuelType fuelType;
 
         // in liters
         uint tankCapacity;
 
         // in liters
-        uint tankUsage;
+        uint fuelLevel;
+
+        public Tank(uint capacity)
+        {
+            tankCapacity = capacity;
+        }
+
+        public void AddFuelToTank(uint fuelQuantity, FuelType type)
+        {
+            if (fuelQuantity <= 0)
+            {
+                Console.WriteLine($"fuelQuantity has to be greater than 0");
+                return;
+            }
+            if (fuelLevel != 0 && type != fuelType)
+            {
+                Console.WriteLine($"Tank already contains fuel of diffrent type: {fuelType}");
+                return;
+            }
+            if (tankCapacity < fuelLevel + fuelQuantity)
+            {
+                Console.WriteLine($"Tank cannot fit that amount of fuel. Remaining capacity is: {tankCapacity - fuelLevel}");
+                return;
+            }
+
+            fuelLevel += fuelQuantity;
+            fuelType = type;
+            Console.WriteLine($"Fuel succesfully added. Current usage of tank is: {fuelLevel}");
+        }
+
+        public void RemoveFuelFromTank(uint fuelQuantity)
+        {
+            if (fuelQuantity <= 0) 
+            {
+                Console.WriteLine($"fuelQuantity has to be greater than 0");
+                return;
+            }
+            if(fuelQuantity > fuelLevel)
+            {
+
+                Console.WriteLine($"fuelQuantity is greater than fuel level in tank.");
+                return;
+            }
+            fuelLevel -= fuelQuantity;
+
+        }
     }
 
     public class TankShip : Ship
     {
-        List<Tank> tanksOnVessel = new();
+        private List<Tank> tanksOnVessel;
 
         public TankShip(string name, char[] IMO, float length, float width) : base(name, IMO, length, width)
         {
+            tanksOnVessel = new List<Tank>(4);
+            for(int i = 0; i < 8; i++)
+            {
+                tanksOnVessel.Add(new Tank(5000000));
+            }
+        }
+
+        public TankShip(string name, char[] IMO, float length, float width, int tanksQuantity) : base(name, IMO, length, width)
+        {
+            if (tanksQuantity <= 0)
+                throw new ArgumentException("tanksQuantity has to be number greater than 0");
+
+            tanksOnVessel = new List<Tank>(tanksQuantity);
+            for(int i = 0; i < tanksQuantity; i++)
+            {
+                tanksOnVessel.Add(new Tank(5000000));
+            }
+        }
+        public TankShip(string name, char[] IMO, float length, float width, int tanksQuantity, uint [] tanksCapacity) : base(name, IMO, length, width)
+        {
+            if (tanksQuantity <= 0)
+                throw new ArgumentException("tanksQuantity has to be number greater than 0");
+
+            if (tanksCapacity == null)
+                throw new ArgumentNullException(nameof(tanksCapacity));
+
+            if (tanksCapacity.Length != tanksQuantity)
+                throw new ArgumentException("tanksCapacity list length doesnt match up with tanksQuantity number");
+
+            if (tanksCapacity.Any(Capacity => Capacity == 0))
+                throw new ArgumentException("Tank capacity cannot be equal to 0");
+
+            tanksOnVessel = new List<Tank>(tanksQuantity);
+            for (int i = 0; i < tanksQuantity; i++)
+            {
+                tanksOnVessel.Add(new Tank(tanksCapacity[i]));
+            }
         }
     }
 
@@ -126,13 +205,13 @@ namespace ShipRegister
             passengersCounter++;
         }
 
-        void deletePassenger(int id)
+        void deletePassenger(uint id)
         {
-
+            passengers.Remove(id);
         }
-        void editPassenger(int id) 
+        void editPassenger(uint id) 
         {
-            
+            var editedPassenger = passengers.GetValueOrDefault(id);
         }
 
         public PassengerShip(string name, char[] IMO, float length, float width) : base(name, IMO, length, width)
